@@ -1,0 +1,15 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "hashicorp/bionic64"
+  config.vm.provision "shell", inline: <<-SHELL
+    apt-get update
+    # apt-get -y upgrade
+    apt-get install -y apache2 docker.io
+    systemctl enable docker
+    usermod -aG docker vagrant
+    apt-get clean
+    echo "Done customising image"
+  SHELL
+end

@@ -1,0 +1,31 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+$script = <<-SCRIPT
+usermod -aG docker vagrant
+SCRIPT
+
+Vagrant.configure("2") do |config|
+    # https://docs.vagrantup.com.
+  
+    config.hostmanager.enabled = true
+    config.hostmanager.ignore_private_ip = false
+    config.hostmanager.include_offline = true 
+
+    # build N nodes
+    (1..6).each do |i|
+        config.vm.define "node#{i}" do |node|
+            node.vm.box = "mydockerbox"
+            node.vm.hostname = "node#{i}.hi2.me.uk"
+            node.vm.network "public_network",
+                bridge: "enp0s31f6",
+                mac: "08002739001#{i}",
+                ip: "192.168.1.1#{i}"
+            node.hostmanager.aliases = %w(node)
+            node.vm.provider "virtualbox" do |vb|
+                vb.memory = "2048"
+            end
+            config.vm.provision "shell", inline: $script
+        end
+    end
+end

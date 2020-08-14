@@ -1,0 +1,4 @@
+vagrant_install/
+getting_started/
+**/.vagrant/
+*.box
